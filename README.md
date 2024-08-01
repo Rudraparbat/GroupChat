@@ -12,9 +12,18 @@ Where everyone can create their own room and chat.
   . chat-page :  
     ![chat-page](https://github.com/user-attachments/assets/9db97986-8fb9-4ba7-ae18-40cb78e94710)
 # Installation :
-  # step-1 :
-    go to my repo and then code section then download zip file.
-  # Insstall requirements :
+  . download zip from :
+
+  
+    https://github.com/Rudraparbat/Chatbot.git
+  # Install requirements :
     pip install -r requirements.txt
   # setup Database :
-    python manage.py
+    python manage.py makemigrations
+    python manage.py migrate
+  # start server :
+    python manage.py runserver
+  
+  Server will be available at http://127.0.0.1:8000 in your browser
+
+  or Go the browser paste the url after starting the server and enjoy the 'CHATBOT'. Thank You
