@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .container {
+        position: relative;
+        height: 100vh;
+    }
+    .centered-button {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 10px 20px;
+        background-color: #000000;
+        color: #000000;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Add transition effect */
+    }
+    .centered-button:hover {
+        background-color: #c7d1d8; /* Change color on hover */
+    }
+    /* styles.css */
+    .side {
+        margin: 20px;
+        font-size: 16px;
+    }
+    .hidden {
+        display: none;
+    }
+
+
+</style>
+
+<body>
+    <div class="side">
+        <h1 align="center">enough scrolling now go to the main page create room and talk</h1>
+    </div>
+    <div class="container">
+        <button class="centered-button"><a href="{% url 'main' %}" style="text-decoration: none;">lets go</a></button>
+    </div>
+
+</body>
+    
+</html>
