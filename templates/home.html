@@ -9,24 +9,24 @@
     .container {
         position: relative;
         height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px; /* Space between buttons */
     }
     .centered-button {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
         padding: 10px 20px;
         background-color: #000000;
-        color: #000000;
+        color: #8d2896; /* White text for visibility */
         border: none;
         border-radius: 5px;
         cursor: pointer;
         transition: background-color 0.3s ease; /* Add transition effect */
+        text-decoration: none; /* Remove underline from link */
     }
     .centered-button:hover {
-        background-color: #c7d1d8; /* Change color on hover */
+        background-color: #191c1f; /* Change color on hover */ /* Black text on hover */
     }
-    /* styles.css */
     .side {
         margin: 20px;
         font-size: 16px;
@@ -34,8 +34,6 @@
     .hidden {
         display: none;
     }
-
-
 </style>
 
 <body>
@@ -43,9 +41,9 @@
         <h1 align="center">enough scrolling now go to the main page create room and talk</h1>
     </div>
     <div class="container">
-        <button class="centered-button"><a href="{% url 'main' %}" style="text-decoration: none;">lets go</a></button>
+        <a href="{% url 'si' %}" class="centered-button">Sign Up</a>
+        <a href="{% url 'li' %}" class="centered-button">Login</a>
+      
     </div>
-
 </body>
-    
 </html>

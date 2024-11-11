@@ -4,7 +4,10 @@ from django.contrib.auth import authenticate , login , logout
 from django.contrib.auth.decorators import login_required
 from .models import *
 from .forms import *
+import re
 def home(request) :
+    if request.user.is_authenticated :
+        return redirect('main')
     return render(request , 'home.html')
 def main(request) :
     if request.GET.get('q') != None :
@@ -56,12 +59,15 @@ def deleter(request,pk) :
 def signin(request) :
     sihn = UserCreationForm()
     if request.method == 'POST' :
-        mainuser = UserCreationForm(request.POST)
-        if mainuser.is_valid() :
-            mainuser.save()
-            return redirect('main')
-        else :
-            return HttpResponse("your password is not valid or your username.. enter them correct way")
+        username = request.POST.get('username')
+        email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+        if re.match(email_regex,username) :
+            mainuser = UserCreationForm(request.POST)
+            if mainuser.is_valid() :
+                mainuser.save()
+                return redirect('li')
+            else :
+                return redirect('si')
     return render(request , 'signin.html', {'sin':sihn})
 def logini(request) :
     if request.user.is_authenticated :
@@ -74,11 +80,11 @@ def logini(request) :
             login(request , user)
             return redirect('main')
         else :
-            return HttpResponse("your input data must be wrong or yu doesnt have any account go and sign up")
+            return redirect('li')
     return render(request , 'logge.html')
 def getout(request) :
     logout(request)
-    return redirect('main')
+    return redirect('/')
 def chatting(request,pk) :
     roomca = chatroom.objects.get(id=pk)
     msgr = roomca.msg_set.all()
@@ -88,5 +94,3 @@ def chatting(request,pk) :
         roomca.participants.add(request.user)
         return redirect('ch' ,pk=roomca.id)
     return render(request , 'chat.html' ,{'msg':msgr ,'past':parts})
-
-

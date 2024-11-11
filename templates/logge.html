@@ -64,21 +64,11 @@
                 <label for="password" class="form-label">Password</label>
                 <input type="password"  name="pa" class="form-control" id="password" placeholder="Enter your password" required>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-            <div class="form-text mt-3">Don't have an account? <a href="{% url 'si' %}" style="color: #614b0e;">Sign up</a></div>
+            <button type="submit" class="btn btn-primary">Login</button><br><br>
         </form>
+        <a href=""><button type="submit" class="btn btn-primary">Login wiht google</button></a>
+        <div class="form-text mt-3">Don't have an account? <a href="{% url 'si' %}" style="color: #614b0e;">Sign up</a></div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
-
-<!-- <form method="POST">
-    {% csrf_token %}
-    <label for="">username</label><br>
-    <input type="text" name="us" placeholder="enter your username"><br>
-    <label for="">password</label><br>
-    <input type="password" placeholder="enter password"><br>
-    <input type="submit" value="submit">
-
-</form>
-<h3>dont have acount then <a href="">sign in</a></h3> -->
