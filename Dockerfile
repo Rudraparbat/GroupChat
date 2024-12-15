@@ -1,17 +1,23 @@
 FROM python:3.13-slim-bookworm
 
+# Set the working directory
 WORKDIR /app
 
+# Copy dependencies
 COPY requirements.txt requirements.txt
 
-RUN pip3 install -r requirements.txt
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the project files
 COPY . /app
 
+# Set environment variables
 ENV DJANGO_SETTINGS_MODULE=chats.settings
-
 ENV PYTHONUNBUFFERED=1
 
+# Expose the application port
 EXPOSE 8000
 
-CMD ["daphne ","-b 0.0.0.0" ,"-p 8000" ,"chats.asgi:application"]
+# Start the application using Daphne
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "chats.asgi:application"]
