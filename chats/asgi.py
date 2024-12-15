@@ -16,10 +16,10 @@ from django.core.asgi import get_asgi_application
 from django.urls import path , re_path
 from conn.consumers import *
 
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chats.settings')
 
 application = ProtocolTypeRouter({
-    # Django's ASGI application to handle traditional HTTP requests
     "http": get_asgi_application(),
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(

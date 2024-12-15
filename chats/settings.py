@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'conn.apps.ConnConfig',
-    'chats',
 ]
 # social account provider
 
@@ -81,7 +80,7 @@ ASGI_APPLICATION = 'chats.asgi.application'
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/0', 
+        'LOCATION': 'redis://redis:6379/0', 
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'KEY_PREFIX': 'cache_'
@@ -94,7 +93,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [("127.0.0.1", 6379)],  
+            "hosts": [('redis', 6379)],  
             'prefix': 'channels_' 
         },
     },

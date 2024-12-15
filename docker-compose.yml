@@ -1,0 +1,16 @@
+services:
+  redis:
+    image: redis:alpine  # Use a lightweight Redis image
+    ports:
+      - "6379:6379"
+  app:
+    build: .
+    volumes :
+      - .:/chatapp
+    ports:
+      [8000:8000]
+    image: app:chatapp
+    container_name: chat_container
+    command:  daphne -u /tmp/daphne.sock chats.asgi:application
+    depends_on:
+      - redis
