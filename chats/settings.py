@@ -76,8 +76,9 @@ TEMPLATES = [
 ASGI_APPLICATION = 'chats.asgi.application'
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://chatterbox-5ysg.onrender.com',
-    'http://localhost:8000',  
+    # 'https://chatterbox-5ysg.onrender.com',
+    # 'http://localhost:8000',  
+    "*"
 ]
 
 # Database
