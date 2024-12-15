@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'conn.apps.ConnConfig',
+    'conn',
 ]
 # social account provider
 
