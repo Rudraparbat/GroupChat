@@ -11,6 +11,6 @@ services:
       [8000:8000]
     image: app:chatapp
     container_name: chat_container
-    command:  daphne -u /tmp/daphne.sock chats.asgi:application
+    command:  daphne -b 0.0.0.0 -p 8000 chats.asgi:application
     depends_on:
       - redis

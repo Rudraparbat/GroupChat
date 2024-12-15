@@ -72,6 +72,8 @@ TEMPLATES = [
     },
 ]
 
+REDIS_URL = "redis://red-ctf9iolds78s73dnrfl0:6379"
+
 ASGI_APPLICATION = 'chats.asgi.application'
 
 CSRF_TRUSTED_ORIGINS = [
@@ -84,7 +86,7 @@ CSRF_TRUSTED_ORIGINS = [
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://redis:6379/0', 
+        'LOCATION': REDIS_URL, 
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             'KEY_PREFIX': 'cache_'
@@ -97,7 +99,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('redis', 6379)],  
+            "hosts": [(REDIS_URL, 6379)],  
             'prefix': 'channels_' 
         },
     },
