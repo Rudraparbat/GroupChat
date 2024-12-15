@@ -2,7 +2,19 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from channels.layers import get_channel_layer
 import redis
-redis_client = redis.StrictRedis(host="redis" , port = 6379 ,db=0)
+import os
+from urllib.parse import urlparse
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+parsed_url = urlparse(REDIS_URL)
+redis_client = redis.StrictRedis(
+    host=parsed_url.hostname,
+    port=parsed_url.port,
+    db=parsed_url.path.lstrip('/'),  # Extract db number after '/'
+    password=parsed_url.password,  # If password is provided in URL
+    ssl=False  # Set to True if you're using a secure Redis URL (e.g., redis://:password@hostname:port/0)
+)
+
+
 class Chatapp(AsyncWebsocketConsumer) :
     async def connect(self) :
         group_name = self.scope['url_route']['kwargs']['room_name']
