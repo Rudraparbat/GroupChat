@@ -3,14 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Page</title>
     <style>
         body {
@@ -161,155 +153,6 @@
         border-left: 1px solid #333;
     }
 }
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #121212;
-    color: #e0e0e0;
-}
-
-.container {
-    display: flex;
-    width: 90%;
-    height: 90%;
-    max-width: 1200px;
-    border: 1px solid #333;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    flex-direction: column;
-}
-
-.chat-container {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    background-color: #1e1e1e;
-}
-
-.chat-box {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    border-bottom: 1px solid #333;
-}
-
-.message {
-    margin: 10px 0;
-    padding: 15px;
-    background-color: #333;
-    border-radius: 10px;
-    transition: transform 0.2s ease-in-out;
-}
-
-.message:hover {
-    transform: scale(1.02);
-}
-
-.sender {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #ffc107;
-}
-
-.text {
-    font-size: 1rem;
-    line-height: 1.4;
-}
-
-.input-box {
-    display: flex;
-    padding: 15px;
-    background-color: #222;
-    border-top: 1px solid #333;
-}
-
-.input-box input {
-    flex: 1;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 25px;
-    margin-right: 10px;
-    background-color: #333;
-    color: #e0e0e0;
-    font-size: 1rem;
-}
-
-.input-box input:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgba(255, 193, 7, 0.8);
-}
-
-.input-box button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 25px;
-    background-color: #ffc107;
-    color: #121212;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.input-box button:hover {
-    background-color: #e0a800;
-}
-
-.participants {
-    flex: 1;
-    padding: 20px;
-    background-color: #1e1e1e;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-left: 1px solid #333;
-}
-
-.participants h2 {
-    margin: 0 0 20px 0;
-    font-size: 1.5rem;
-    color: #ffc107;
-    text-shadow: 1px 1px 2px #000;
-}
-
-.participants ul {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-}
-
-.participants li {
-    padding: 10px 0;
-    margin: 5px 0;
-    text-align: center;
-    background-color: #333;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.participants li:hover {
-    background-color: #444;
-}
-
-@media (min-width: 768px) {
-    .container {
-        flex-direction: row;
-    }
-
-    .chat-container {
-        flex: 2;
-    }
-
-    .participants {
-        flex: 1;
-        border-left: 1px solid #333;
-    }
-}
-
 
     </style>
 </head>
@@ -317,33 +160,101 @@ body {
     <div class="container">
         <div class="chat-container">
             <div class="chat-box" id="chat-box">
-                {% for j in msg %}
-                <div class="message">
-                    <div class="sender">@{{j.host}} {{j.created|timesince}} ago</div>
-                    <div class="text">{{j.body}}</div>
-                </div>
-                {% endfor %}
+                <!-- Existing messages will go here -->
             </div>
             <div class="input-box">
-                <form method="POST">
+                <form method="POST" id="form">
                     {% csrf_token %}
-                <input type="text" id="message-input" name='m' placeholder="Type a message...">
-                <button id="send-button">Send</button>
+                    <input type="text" id="message-input" name='m' placeholder="Type a message...">
+                    <button id="send-button">Send</button>
                 </form>
             </div>
         </div>
-        <div class="participants">
+        <!-- <div class="participants">
             <h2>Participants</h2>
-            <ul>
-                {% for l in past  %}
-                <li>{{l}} joined</li>
+            <ul id="participants-list">
+                {% for l in past %}
+                    <li>{{l}} joined</li>
                 {% endfor %}
             </ul>
-        </div>
+        </div> -->
     </div>
-</body>
-</html>
+    <script>
+        const fullUrl = window.location.href;
+        console.log('Full URL:', fullUrl);
+        const socket = new WebSocket(fullUrl);
+        let username = "{{usr}}"
+        const chatBox = document.getElementById('chat-box');
+        console.log(username)
+        socket.addEventListener("open", (event) => {
+            console.log("Connection established...");
+        });
 
+        socket.addEventListener("message", (event) => {
+            let datas = JSON.parse(event.data);
+            
+            // Get the chat-box container
+            const chatBox = document.querySelector('#chat-box');
 
+            // Create a new message container
+            if (datas.type === "new_message"){
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                const usernameDiv = document.createElement('div');
+                usernameDiv.classList.add('sender');
+                usernameDiv.textContent = datas.username;
+                const messageContent = document.createElement('div');
+                messageContent.classList.add('text');
+                messageContent.textContent = datas.message; 
+                messageDiv.appendChild(usernameDiv);
+                messageDiv.appendChild(messageContent);
+                chatBox.appendChild(messageDiv);
+                console.log(datas.message);
+            }
+            else if(datas.type === "old_message"){
+                datas.messages.forEach((msg) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                
+                // Assuming the old message is an object with 'username' and 'message' properties
+                const usernameDiv = document.createElement('div');
+                usernameDiv.classList.add('sender');
+                usernameDiv.textContent = msg.username;  // Assuming `msg.username` holds the sender's username
+                
+                const messageContent = document.createElement('div');
+                messageContent.classList.add('text');
+                messageContent.textContent = msg.message;  // Assuming `msg.message` holds the message text
+                
+                messageDiv.appendChild(usernameDiv);
+                messageDiv.appendChild(messageContent);
+                chatBox.appendChild(messageDiv);
+            });
+            
+            }
+            else if(datas.type === "joined"){
+                console.log(datas.users)
+            }
+
+        });
+
+            
+
+        socket.addEventListener("close", (event) => {
+            console.log("Connection closed...");
+        });
+
+        let form = document.getElementById("form");
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            let message = e.target.m.value;
+            socket.send(JSON.stringify({
+                "type" : "new_message",
+                "message": message,
+                "username" : username
+            }));
+            form.reset();
+        });
+
+    </script>
 </body>
 </html>

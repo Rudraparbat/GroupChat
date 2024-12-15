@@ -78,19 +78,27 @@ def logini(request) :
         user = authenticate(username=username , password=password)
         if user is not None :
             login(request , user)
-            return redirect('main')
+            response = redirect('main')
+            response.set_cookie('username', user.username, max_age=3600, secure=True, httponly=True)
+            return response
         else :
             return redirect('li')
     return render(request , 'logge.html')
 def getout(request) :
     logout(request)
-    return redirect('/')
+    response =  redirect('/')
+    response.delete_cookie('username')
+    return response
+@login_required(login_url='li')
 def chatting(request,pk) :
     roomca = chatroom.objects.get(id=pk)
     msgr = roomca.msg_set.all()
+    roomca.participants.add(request.user)
     parts = roomca.participants.all()
-    if request.method == 'POST' :
-        ms = msg.objects.create(host=request.user,room=roomca , body=request.POST.get('m'))
-        roomca.participants.add(request.user)
-        return redirect('ch' ,pk=roomca.id)
-    return render(request , 'chat.html' ,{'msg':msgr ,'past':parts})
+    print(parts)
+    user =  request.COOKIES.get('username')
+    if(user) :
+        return render(request , 'chat.html' ,{'usr': user ,'past':parts})
+    else :
+        return redirect('li')
+    
