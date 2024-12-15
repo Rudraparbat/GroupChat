@@ -74,6 +74,10 @@ TEMPLATES = [
 
 ASGI_APPLICATION = 'chats.asgi.application'
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://chatterbox-5ysg.onrender.com',
+    'http://localhost:8000',  
+]
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
