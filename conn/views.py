@@ -3,8 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate , login , logout  
 from django.contrib.auth.decorators import login_required
 from .models import *
-from .forms import *
 import re
+from .generator import *
 def home(request) :
     if request.user.is_authenticated :
         return redirect('main')
@@ -15,7 +15,7 @@ def main(request) :
         rooms = chatroom.objects.filter(name__icontains=a)
         b= rooms.count()
     else :
-        rooms = chatroom.objects.all()
+        rooms = chatroom.objects.filter(room_type="public")
         b = rooms.count()
     return render(request , 'index.html' , {'room':rooms , 'b':b})
 @login_required(login_url='li')
@@ -27,20 +27,22 @@ def rooms(request , pk) :
         pasr = 'no'
     if request.method =='POST' :
         pas = request.POST.get('pa')
-        if pas == ct.password :
+        if pas == ct.room_id :
             return render(request , 'room.html' ,{'ct':ct , 'pasr':pasr})
         else :
             return HttpResponse("sorry you cant enter this room cause your enterd password is wrong my friend")
     return render(request , 'password.html',{'cts':ct})
 @login_required(login_url='li')
 def createroom(request):
-    form = roomfrom()
     if request.method=='POST' :
-        vform= roomfrom(request.POST)
-        if vform.is_valid() :
-            vform.save()
-            return redirect('main')
-    return render(request , 'from.html' ,{'from' : form})
+        room_name = request.POST.get('room_name')
+        bio = request.POST.get('bio')
+        room_id  = PasswordGenerator.generate()
+        room_type = request.POST.get('room_types')
+        Room = chatroom(name=room_name,bio=bio,room_id=room_id,room_type=room_type)
+        Room.save()
+        return redirect('main')
+    return render(request , 'from.html')
 def updatedr(request , pk) :
     upfor = chatroom.objects.get(id=pk)
     ufor = roomfrom(instance=upfor)
