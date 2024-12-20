@@ -21,16 +21,6 @@ def main(request) :
 @login_required(login_url='li')
 def rooms(request , pk) :
     ct = chatroom.objects.get(id=pk)
-    if(str(request.user) == str(ct.name)) :
-        pasr = 'ok'
-    else :
-        pasr = 'no'
-    if request.method =='POST' :
-        pas = request.POST.get('pa')
-        if pas == ct.room_id :
-            return render(request , 'room.html' ,{'ct':ct , 'pasr':pasr})
-        else :
-            return HttpResponse("sorry you cant enter this room cause your enterd password is wrong my friend")
     return render(request , 'password.html',{'cts':ct})
 @login_required(login_url='li')
 def createroom(request):
@@ -39,7 +29,7 @@ def createroom(request):
         bio = request.POST.get('bio')
         room_id  = PasswordGenerator.generate()
         room_type = request.POST.get('room_types')
-        Room = chatroom(name=room_name,bio=bio,room_id=room_id,room_type=room_type)
+        Room = chatroom(host=request.user,name=room_name,bio=bio,room_id=room_id,room_type=room_type)
         Room.save()
         return redirect('main')
     return render(request , 'from.html')
@@ -52,12 +42,10 @@ def updatedr(request , pk) :
             fo.save()
             return redirect('main')
     return render(request , 'from.html' ,{'from' : ufor})
-def deleter(request,pk) :
-    dfor = chatroom.objects.get(id=pk)
-    if request.method == 'POST':
-        dfor.delete()
-        return redirect(main)
-    return render(request , 'delete.html')
+def Profile_page(request) :
+    user_id = request.COOKIES.get('id')
+    user_profile = chatroom.objects.get(id=user_id)
+    return render(request , 'profile.html' , {'user':user_profile})
 def signin(request) :
     sihn = UserCreationForm()
     if request.method == 'POST' :
@@ -81,7 +69,7 @@ def logini(request) :
         if user is not None :
             login(request , user)
             response = redirect('main')
-            response.set_cookie('username', user.username, max_age=3600, secure=True, httponly=True)
+            response.set_cookie('id', user.id, max_age=3600, secure=True, httponly=True)
             return response
         else :
             return redirect('li')
@@ -89,18 +77,16 @@ def logini(request) :
 def getout(request) :
     logout(request)
     response =  redirect('/')
-    response.delete_cookie('username')
+    response.delete_cookie('id')
     return response
 @login_required(login_url='li')
 def chatting(request,pk) :
     roomca = chatroom.objects.get(id=pk)
-    msgr = roomca.msg_set.all()
     roomca.participants.add(request.user)
-    parts = roomca.participants.all()
-    print(parts)
-    user =  request.COOKIES.get('username')
+    user =  request.COOKIES.get('id')
     if(user) :
-        return render(request , 'chat.html' ,{'usr': user ,'past':parts})
+        username = chatroom.objects.get(id=user)
+        return render(request , 'chat.html' ,{'usr': username.host.username })
     else :
         return redirect('li')
     

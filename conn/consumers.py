@@ -36,7 +36,7 @@ class Chatapp(AsyncWebsocketConsumer) :
                 }))
                 print(list(map(lambda msg: json.loads(msg.decode()), latest_messages)))
 
-        # await self.show_user_count()
+
 
 
 
