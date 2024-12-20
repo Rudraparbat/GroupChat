@@ -20,4 +20,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
 # Start the application using Daphne
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "chats.asgi:application"]
+ENTRYPOINT  ["./entrypoint.sh"]
