@@ -1,7 +1,5 @@
 #!/bin/sh
 
-./wait-for-it.sh db:5432 --timeout=30 --strict -- echo "Database is up!"
-
 echo "Running makemigrations..."
 python manage.py makemigrations
 
