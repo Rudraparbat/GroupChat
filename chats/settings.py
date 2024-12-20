@@ -77,7 +77,7 @@ ASGI_APPLICATION = 'chats.asgi.application'
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',  
-    'https://test-chat-sys.onrender.com',
+    'https://groupchat-30bf.onrender.com',
 ]
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/1")
 # Database
