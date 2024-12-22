@@ -81,7 +81,6 @@ def getout(request) :
     return response
 @login_required(login_url='li')
 def chatting(request,pk) :
-    roomca.participants.add(request.user)
     User_id =  request.COOKIES.get('id')
     if(User_id) :
         user = chatroom.objects.get(id=pk)
