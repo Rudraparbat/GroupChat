@@ -14,7 +14,7 @@ Where everyone can create their own room and chat freely.
 2. git
 ### Installation :
   ## Clone the repo :
-    git clone https://github.com/Rudraparbat/Chatbot.git
+    git clone https://github.com/Rudraparbat/GroupChat.git
   ## Go to the directory :
     cd GroupChat
   ## Wake the docker container ;
