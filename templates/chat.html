@@ -5,256 +5,346 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Page</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #121212;
-    color: #e0e0e0;
-}
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+        }
 
-.container {
-    display: flex;
-    width: 90%;
-    height: 90%;
-    max-width: 1200px;
-    border: 1px solid #333;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    flex-direction: column;
-}
+        .container {
+            display: flex;
+            width: min(95%, 1200px);
+            height: 90vh;
+            border: 1px solid #333;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        }
 
-.chat-container {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    background-color: #1e1e1e;
-}
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #1e1e1e;
+            height: 100%;
+        }
 
-.chat-box {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    border-bottom: 1px solid #333;
-}
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #444 #1e1e1e;
+        }
 
-.message {
-    margin: 10px 0;
-    padding: 15px;
-    background-color: #333;
-    border-radius: 10px;
-    transition: transform 0.2s ease-in-out;
-}
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
 
-.message:hover {
-    transform: scale(1.02);
-}
+        .chat-box::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
 
-.sender {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #ffc107;
-}
+        .chat-box::-webkit-scrollbar-thumb {
+            background-color: #444;
+            border-radius: 4px;
+        }
 
-.text {
-    font-size: 1rem;
-    line-height: 1.4;
-}
+        .message {
+            max-width: 85%;
+            margin: 8px 0;
+            padding: 12px 16px;
+            background-color: #333;
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+            word-break: break-word;
+            animation: messageAppear 0.3s ease;
+        }
 
-.input-box {
-    display: flex;
-    padding: 15px;
-    background-color: #222;
-    border-top: 1px solid #333;
-}
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.input-box input {
-    flex: 1;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 25px;
-    margin-right: 10px;
-    background-color: #333;
-    color: #e0e0e0;
-    font-size: 1rem;
-}
+        .message:hover {
+            transform: scale(1.01);
+        }
 
-.input-box input:focus {
-    outline: none;
-    box-shadow: 0 0 5px rgba(255, 193, 7, 0.8);
-}
+        .sender {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #ffc107;
+        }
 
-.input-box button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 25px;
-    background-color: #ffc107;
-    color: #121212;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        .text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
 
-.input-box button:hover {
-    background-color: #e0a800;
-}
+        .input-box {
+            padding: 16px;
+            background-color: #222;
+            border-top: 1px solid #333;
+        }
 
-.participants {
-    flex: 1;
-    padding: 20px;
-    background-color: #1e1e1e;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-left: 1px solid #333;
-}
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #333;
+            border-radius: 24px;
+            padding: 4px 8px 4px 16px;
+            transition: box-shadow 0.3s ease;
+        }
 
-.participants h2 {
-    margin: 0 0 20px 0;
-    font-size: 1.5rem;
-    color: #ffc107;
-    text-shadow: 1px 1px 2px #000;
-}
+        .input-wrapper:focus-within {
+            box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.5);
+        }
 
-.participants ul {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-}
+        #message-form {
+            width: 100%;
+        }
 
-.participants li {
-    padding: 10px 0;
-    margin: 5px 0;
-    text-align: center;
-    background-color: #333;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
+        #message-input {
+            flex: 1;
+            width: 100%;
+            padding: 8px 0;
+            border: none;
+            background: none;
+            color: #e0e0e0;
+            font-size: 1rem;
+            outline: none;
+        }
 
-.participants li:hover {
-    background-color: #444;
-}
+        #message-input::placeholder {
+            color: #888;
+        }
 
-@media (min-width: 768px) {
-    .container {
-        flex-direction: row;
-    }
+        #send-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background-color: #ffc107;
+            color: #121212;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 8px;
+        }
 
-    .chat-container {
-        flex: 2;
-    }
+        #send-button:hover {
+            background-color: #ffca2c;
+            transform: scale(1.05);
+        }
 
-    .participants {
-        flex: 1;
-        border-left: 1px solid #333;
-    }
-}
+        #send-button svg {
+            width: 20px;
+            height: 20px;
+        }
 
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .input-box {
+                padding: 12px;
+            }
+
+            body {
+                position: fixed;
+                width: 100%;
+                height: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="chat-container">
             <div class="chat-box" id="chat-box">
-                <!-- Existing messages will go here -->
+                <!-- Messages will be dynamically added here -->
             </div>
             <div class="input-box">
-                <form method="POST" id="form">
-                    {% csrf_token %}
-                    <input type="text" id="message-input" name='m' placeholder="Type a message...">
-                    <button id="send-button">Send</button>
+                <form id="message-form">
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="message-input" 
+                            placeholder="Type a message..." 
+                            autocomplete="off"
+                        >
+                        <button type="submit" id="send-button" class="hidden">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
-        <!-- <div class="participants">
-            <h2>Participants</h2>
-            <ul id="participants-list">
-                {% for l in past %}
-                    <li>{{l}} joined</li>
-                {% endfor %}
-            </ul>
-        </div> -->
     </div>
+
     <script>
-        const fullUrl = window.location.href;
-        console.log('Full URL:', fullUrl);
-        const socket = new WebSocket(fullUrl);
-        let username = "{{usr}}"
+        // DOM Elements
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
         const chatBox = document.getElementById('chat-box');
-        console.log(username)
-        socket.addEventListener("open", (event) => {
-            console.log("Connection established...");
-        });
 
-        socket.addEventListener("message", (event) => {
-            let datas = JSON.parse(event.data);
-            
-            // Get the chat-box container
-            const chatBox = document.querySelector('#chat-box');
+        // WebSocket setup with reconnection logic
+        let socket = null;
+        const username = "{{user.username}}"; // Replace with actual username logic
 
-            // Create a new message container
-            if (datas.type === "new_message"){
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message');
-                const usernameDiv = document.createElement('div');
-                usernameDiv.classList.add('sender');
-                usernameDiv.textContent = datas.username;
-                const messageContent = document.createElement('div');
-                messageContent.classList.add('text');
-                messageContent.textContent = datas.message; 
-                messageDiv.appendChild(usernameDiv);
-                messageDiv.appendChild(messageContent);
-                chatBox.appendChild(messageDiv);
-                console.log(datas.message);
+        function connectWebSocket() {
+            try {
+                socket = new WebSocket(window.location.href.replace('http', 'ws'));
+                setupWebSocketListeners();
+            } catch (error) {
+                console.error('WebSocket connection failed:', error);
             }
-            else if(datas.type === "old_message"){
-                datas.messages.forEach((msg) => {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message');
-                
-                // Assuming the old message is an object with 'username' and 'message' properties
-                const usernameDiv = document.createElement('div');
-                usernameDiv.classList.add('sender');
-                usernameDiv.textContent = msg.username;  // Assuming `msg.username` holds the sender's username
-                
-                const messageContent = document.createElement('div');
-                messageContent.classList.add('text');
-                messageContent.textContent = msg.message;  // Assuming `msg.message` holds the message text
-                
-                messageDiv.appendChild(usernameDiv);
-                messageDiv.appendChild(messageContent);
-                chatBox.appendChild(messageDiv);
+        }
+
+        function setupWebSocketListeners() {
+            socket.addEventListener('open', () => {
+                console.log('Connected to chat server');
             });
-            
-            }
-            else if(datas.type === "joined"){
-                console.log(datas.users)
-            }
 
+            socket.addEventListener('message', handleMessage);
+
+            socket.addEventListener('close', () => {
+                document.cookie = 'chat_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                console.log('Disconnected from chat server');
+            });
+
+            socket.addEventListener('error', (error) => {
+                console.error('WebSocket error:', error);
+            });
+        }
+
+
+        // Message handling
+        function handleMessage(event) {
+            try {
+                const data = JSON.parse(event.data);
+                
+                switch(data.type) {
+                    case 'new_message':
+                        addMessage(data.username, data.message);
+                        break;
+                    case 'old_message':
+                        data.messages.forEach(msg => {
+                            addMessage(msg.username, msg.message);
+                        });
+                        break;
+                    case 'joined':
+                        console.log('Users:', data.users);
+                        break;
+                }
+            } catch (error) {
+                console.error('Error parsing message:', error);
+            }
+        }
+
+        function addMessage(username, message) {
+            const messageElement = createMessageElement(username, message);
+            chatBox.appendChild(messageElement);
+            scrollToBottom();
+        }
+
+        function createMessageElement(username, message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            
+            const usernameDiv = document.createElement('div');
+            usernameDiv.classList.add('sender');
+            usernameDiv.textContent = username;
+            
+            const textDiv = document.createElement('div');
+            textDiv.classList.add('text');
+            textDiv.textContent = message;
+            
+            messageDiv.appendChild(usernameDiv);
+            messageDiv.appendChild(textDiv);
+            
+            return messageDiv;
+        }
+
+        function scrollToBottom() {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Event Listeners
+        messageInput.addEventListener('input', (e) => {
+            const hasText = e.target.value.trim().length > 0;
+            sendButton.classList.toggle('hidden', !hasText);
         });
 
-            
-
-        socket.addEventListener("close", (event) => {
-            console.log("Connection closed...");
-        });
-
-        let form = document.getElementById("form");
-        form.addEventListener("submit", (e) => {
+        messageForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            let message = e.target.m.value;
-            socket.send(JSON.stringify({
-                "type" : "new_message",
-                "message": message,
-                "username" : username
-            }));
-            form.reset();
+            const message = messageInput.value.trim();
+            
+            if (message && socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: "new_message",
+                    message: message,
+                    username: username
+                }));
+                
+                messageInput.value = '';
+                sendButton.classList.add('hidden');
+            }
+        });
+        console.log(document.cookie);
+
+        // Mobile viewport height fix
+        function setMobileHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+
+        window.addEventListener('resize', setMobileHeight);
+        setMobileHeight();
+        window.addEventListener('beforeunload', function (event) {
+            event.preventDefault(); // Prevents the default unload behavior
+            event.returnValue = ''; // Modern browsers require this for the confirmation dialog
+            return ''; // Legacy browsers require this
         });
 
+        // Initialize WebSocket connection
+        connectWebSocket();
     </script>
 </body>
 </html>

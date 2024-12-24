@@ -79,9 +79,10 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',  
     'https://groupchat-30bf.onrender.com',
 ]
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/1")
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+
+
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
@@ -92,8 +93,6 @@ CACHES = {
         }
     }
 }
-
-# Redis as Channel Layer
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -103,6 +102,7 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
 
 
 DATABASES = {

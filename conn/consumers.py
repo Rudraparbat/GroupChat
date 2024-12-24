@@ -1,19 +1,22 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+from django.core.cache import cache
 from channels.layers import get_channel_layer
 import redis
 import os
 from urllib.parse import urlparse
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+
+#  Redis setup
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 parsed_url = urlparse(REDIS_URL)
 redis_client = redis.StrictRedis(
     host=parsed_url.hostname,
     port=parsed_url.port,
-    db=parsed_url.path.lstrip('/'),  # Extract db number after '/'
-    password=parsed_url.password,  # If password is provided in URL
-    ssl=False  # Set to True if you're using a secure Redis URL (e.g., redis://:password@hostname:port/0)
+    db=int(parsed_url.path.lstrip('/')) if parsed_url.path else 0, 
+    password=parsed_url.password, 
+    ssl=False  
 )
-
 
 class Chatapp(AsyncWebsocketConsumer) :
     async def connect(self) :

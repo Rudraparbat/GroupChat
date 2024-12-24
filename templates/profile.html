@@ -3,12 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile_page</title>
+    <title>Profile Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(-45deg, #121212, #1e1e1e, #2c2c2c, #1a1a1a);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            background-color: rgba(30, 30, 30, 0.9);
+            border: 1px solid #333;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        h1, h2 {
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+
+        .room {
+            background-color: #333;
+            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+            animation: messageAppear 0.3s ease;
+        }
+
+        .room:hover {
+            transform: scale(1.01);
+        }
+
+        p {
+            margin: 8px 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        strong {
+            color: #ffc107;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                border-radius: 8px;
+                padding: 15px;
+            }
+
+            h1, h2 {
+                font-size: 1.5rem;
+            }
+
+            .room {
+                padding: 12px;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 4px;
+                padding: 10px;
+            }
+
+            h1, h2 {
+                font-size: 1.2rem;
+            }
+
+            .room {
+                padding: 10px;
+            }
+
+            p {
+                font-size: 0.85rem;
+            }
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-delete, .btn-chat {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    its your proffile......
-    <p>Your name --- {{user.host}} </p><br>
-    your created rooms are there <br>
-
+    <div class="container">
+        <h1>Your Profile</h1>
+        <p>Your name: {{user.username}}</p>
+        <h2>Your created rooms:</h2>
+        {% if rooms != None %}
+        {% for room in rooms %}
+        <div class="room">
+            <p><strong>Room name:</strong> {{room.name}}</p>
+            <p><strong>Room ID:</strong> {{room.room_id}}</p>
+            <p><strong>Room host:</strong> {{room.host.username}}</p>
+            <p><strong>Room Type:</strong> {{room.room_type}}</p>
+            <p><strong>Created:</strong> {{room.created | timesince}} ago</p>
+            <p><strong>Updated:</strong> {{room.updated | timesince}}</p>
+            <div class="button-group">
+                <button class="btn-delete">Delete</button>
+                <a href="{% url 'room' room.id %}"><button class="btn-chat">Chat</button></a>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
 </body>
 </html>
+

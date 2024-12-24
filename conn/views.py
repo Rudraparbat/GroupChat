@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 import re
 from .generator import *
+from django.core.cache import cache
 def home(request) :
     if request.user.is_authenticated :
         return redirect('main')
@@ -12,7 +13,7 @@ def home(request) :
 def main(request) :
     if request.GET.get('q') != None :
         a = request.GET.get('q')
-        rooms = chatroom.objects.filter(name__icontains=a)
+        rooms = chatroom.objects.filter(name__icontains=a , room_type="public")
         b= rooms.count()
     else :
         rooms = chatroom.objects.filter(room_type="public")
@@ -44,8 +45,16 @@ def updatedr(request , pk) :
     return render(request , 'from.html' ,{'from' : ufor})
 def Profile_page(request) :
     user_id = request.COOKIES.get('id')
-    user_profile = chatroom.objects.get(id=user_id)
-    return render(request , 'profile.html' , {'user':user_profile})
+    if(user_id) :
+        user_profile = User.objects.get(id=user_id)
+        print(user_profile)
+        try :
+            rooms_created = chatroom.objects.filter(host=user_profile)
+        except :
+            rooms_created = None
+        return render(request , 'profile.html' , {'user':user_profile,'rooms':rooms_created})
+    else :
+        return redirect('li')
 def signin(request) :
     sihn = UserCreationForm()
     if request.method == 'POST' :
@@ -69,7 +78,7 @@ def logini(request) :
         if user is not None :
             login(request , user)
             response = redirect('main')
-            response.set_cookie('id', user.id, max_age=3600, secure=True, httponly=True)
+            response.set_cookie('id', user.id, max_age=84600, secure=True, httponly=True)
             return response
         else :
             return redirect('li')
@@ -78,13 +87,40 @@ def getout(request) :
     logout(request)
     response =  redirect('/')
     response.delete_cookie('id')
+    response.delete_cookie('chat_id')
     return response
+
+@login_required(login_url='li')
+def private_room(request) :
+    if request.method == "POST" :
+        room_id = request.POST.get('room_key')    
+        try :
+            rooms = chatroom.objects.get(room_id=room_id,room_type="private")
+        except :
+            rooms = None
+        if rooms :
+            chat_id = PasswordGenerator.chat_id_generate() 
+            response = redirect('ch',pk=rooms.id)
+            response.set_cookie('chat_id', chat_id)
+            return response
+        else :
+            print("room not found")
+    return render(request , 'private_room_password.html')
+
 @login_required(login_url='li')
 def chatting(request,pk) :
     User_id =  request.COOKIES.get('id')
-    if(User_id) :
-        user = chatroom.objects.get(id=pk)
-        return render(request , 'chat.html' ,{'usr': username.host.username })
+    try :
+        chat_id = request.COOKIES.get('chat_id')
+    except :
+        chat_id = None
+        return redirect('main')
+    if(User_id or chat_id is not None) :
+        user = User.objects.get(id=User_id)
+        try :
+            chat_room = chatroom.objects.get(id=pk)
+            return render(request , 'chat.html' ,{'room': chat_room , 'user':user})
+        except :
+            return redirect('rooms',pk=pk)
     else :
         return redirect('li')
-    

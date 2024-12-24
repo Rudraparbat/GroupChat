@@ -11,7 +11,7 @@ class chatroom(models.Model) :
     host = models.ForeignKey(User,on_delete=models.CASCADE,null=True,related_name='Host_chatroom')
     name = models.TextField(max_length=25)
     bio = models.TextField(max_length=200)
-    room_id = models.CharField(max_length=4)
+    room_id = models.CharField(max_length=8)
     room_type = models.CharField(
         max_length=10,
         choices=ROOM_TYPE_CHOICES,
