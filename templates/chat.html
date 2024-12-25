@@ -250,10 +250,141 @@
                 padding: 12px;
             }
         }
+        .container {
+            display: flex;
+            width: min(95%, 1200px);
+            height: 90vh;
+            height: calc(var(--app-height) * 0.95);
+            border: 1px solid #333;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .participants-sidebar {
+            width: 250px;
+            background-color: #252525;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .participants-header {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+            background-color: #1a1a1a;
+        }
+
+        .participants-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffc107;
+            margin: 0;
+        }
+
+        .participants-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        .participant {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        @media (hover: hover) {
+            .participant:hover {
+                background-color: #333;
+            }
+        }
+
+        .participant-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4caf50;
+            margin-right: 12px;
+        }
+
+        .participant-name {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .toggle-participants {
+            display: none;
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 100;
+            padding: 8px;
+            background-color: #333;
+            border: none;
+            border-radius: 50%;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        @media (max-width: 768px) {
+            .participants-sidebar {
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 50;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .participants-sidebar.active {
+                transform: translateX(0);
+            }
+
+            .toggle-participants {
+                display: flex;
+            }
+
+            .toggle-participants.active {
+                left: 262px;
+            }
+
+            .chat-container {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="container">
+            <button class="toggle-participants" id="toggle-participants">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </button>
+            <div class="participants-sidebar" id="participants-sidebar">
+                <div class="participants-header">
+                    <h2>Participants</h2>
+                </div>
+                <div class="participants-list" id="participants-list">
+                    <!-- Participants will be added here dynamically -->
+                </div>
+            </div>
         <div class="chat-container">
             <div class="chat-box" id="chat-box">
                 <!-- Messages will be dynamically added here -->
@@ -298,6 +429,72 @@
         });
         
         setAppHeight();
+        const toggleBtn = document.getElementById('toggle-participants');
+        const sidebar = document.getElementById('participants-sidebar');
+        
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            toggleBtn.classList.toggle('active');
+        });
+
+
+        messageInput.addEventListener('input', () => {
+            sendButton.classList.toggle('hidden', !messageInput.value.trim());
+        });
+
+        // Example function to add a participant
+        function addParticipant(username) {
+            const participantsList = document.getElementById('participants-list');
+            
+            // Check if participant already exists
+            const existingParticipant = Array.from(participantsList.getElementsByClassName('participant'))
+                .find(participant => participant.querySelector('.participant-name').textContent === username);
+            
+            // If participant already exists, don't add them again
+            if (existingParticipant) {
+                console.log(`Participant ${username} already exists`);
+                return;
+            }
+            // Create new participant element
+            const participantElement = document.createElement('div');
+            participantElement.className = 'participant';
+            participantElement.innerHTML = `
+                <div class="participant-status"></div>
+                <div class="participant-name">${username}</div>
+            `;
+            participantsList.appendChild(participantElement);
+    }
+
+        //  function to remove participant
+        function removeParticipant(username) {
+            const participantsList = document.getElementById('participants-list');
+            const participants = participantsList.getElementsByClassName('participant');
+            
+            for (const participant of participants) {
+                const nameElement = participant.querySelector('.participant-name');
+                if (nameElement.innerHTML === username) {
+                    console.log('Removed:', username);
+                    participant.remove();
+                    break;
+                }
+            }
+        }
+
+        // function broadcastUserLeave(username) {
+        //     const chatBox = document.getElementById('chat-box');
+        //     const leaveMessage = document.createElement('div');
+        //     leaveMessage.className = 'message';
+        //     leaveMessage.style.backgroundColor = '#2a2a2a';
+        //     leaveMessage.style.textAlign = 'center';
+        //     leaveMessage.style.maxWidth = '100%';
+        //     leaveMessage.innerHTML = `
+        //         <div class="text" style="color: #ff5252">
+        //             ${username} has left the room
+        //         </div>
+        //     `;
+        //     chatBox.appendChild(leaveMessage);
+        //     chatBox.scrollTop = chatBox.scrollHeight;
+        // }
 
         // Prevent elastic scrolling on iOS
         document.body.addEventListener('touchmove', function(e) {
@@ -358,9 +555,20 @@
                             addMessage(msg.username, msg.message);
                         });
                         break;
-                    case 'joined':
-                        console.log('Users:', data.users);
+                    case 'old_participants':
+                        data.participants.forEach(user => {
+                            addParticipant(user);
+                        });
                         break;
+                    case 'new_participant' :
+                        console.log('Added:', data.participant);
+                        addParticipant(data.participant);
+                        break
+                    case 'left_participant' :
+                        console.log('Removed:', data.participant);
+                        removeParticipant(data.participant);
+                        break
+
                 }
             } catch (error) {
                 console.error('Error parsing message:', error);
@@ -435,8 +643,12 @@
             event.returnValue = '';
             return '';
         });
-
-        // Initialize WebSocket connection
+        const appHeight = () => {
+            const doc = document.documentElement;
+            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+        };
+        window.addEventListener('resize', appHeight);
+        appHeight();
         connectWebSocket();
     </script>
 </body>

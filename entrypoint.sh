@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "Flushing Redis data..."
+redis-cli FLUSHALL
+
 echo "Running makemigrations..."
 python manage.py makemigrations
 
