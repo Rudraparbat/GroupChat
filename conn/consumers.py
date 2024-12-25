@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 #  Redis setup
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 parsed_url = urlparse(REDIS_URL)
 redis_client = redis.StrictRedis(
     host=parsed_url.hostname,
