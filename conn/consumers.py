@@ -31,15 +31,16 @@ class Chatapp(AsyncWebsocketConsumer) :
         )
         await self.accept()
         user = self.scope['user']
-        if user.is_authenticated:
-            redis_client.sadd(self.participant_key, user.username)
-            await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type' : 'new_participant',
-                        "participant" : user.username
-                    }
-                )
+        self.username = user['username']
+        
+        redis_client.sadd(self.participant_key, self.username)
+        await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type' : 'new_participant',
+                    "participant" : self.username
+                }
+            )
 
         # shows last 20 messages..
         if self.redis_key :
@@ -99,15 +100,14 @@ class Chatapp(AsyncWebsocketConsumer) :
     
     async def disconnect(self , close_code) :
         user = self.scope['user']
-        if user.is_authenticated:
-            redis_client.srem(self.participant_key, user.username)
-            await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type' : 'left_participant',
-                        "participant" : user.username
-                    }
-                )
+        redis_client.srem(self.participant_key, self.username)
+        await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type' : 'left_participant',
+                    "participant" : self.username
+                }
+            )
         await self.channel_layer.group_discard(
             self.room_group_name, 
             self.channel_name

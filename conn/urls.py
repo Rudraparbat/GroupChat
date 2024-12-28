@@ -10,7 +10,7 @@ urlpatterns = [
     path('crooms' , views.createroom , name='cr'),
     path('private_room' , views.private_room , name='private'),
     path('profile/',views.Profile_page,name='profile'),
-    path('signed/' , views.signin , name='si'),
-    path('loged/' , views.logini , name='li'),
-    path('out/' , views.getout , name='go'),
+    path('signup/' , views.register , name='si'),
+    path('login/' , views.login_users , name='li'),
+    path('logout/' , views.getout , name='go'),
 ]

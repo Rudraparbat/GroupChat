@@ -3,14 +3,23 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate , login , logout  
 from django.contrib.auth.decorators import login_required
 from .models import *
-import re
 from .generator import *
-from django.core.cache import cache
+
 def home(request) :
-    if request.user.is_authenticated :
+    try :
+        tokens = request.COOKIES.get('access_token')
+    except :
+        tokens = None
+    if tokens :
         return redirect('main')
     return render(request , 'home.html')
 def main(request) :
+    try :
+        tokens = request.COOKIES.get('access_token')
+        response = PasswordGenerator.decode_token(tokens)
+        username = response['username']
+    except :
+        return redirect('li')
     if request.GET.get('q') != None :
         a = request.GET.get('q')
         rooms = chatroom.objects.filter(name__icontains=a , room_type="public")
@@ -18,36 +27,66 @@ def main(request) :
     else :
         rooms = chatroom.objects.filter(room_type="public")
         b = rooms.count()
-    return render(request , 'index.html' , {'room':rooms , 'b':b})
-@login_required(login_url='li')
+    return render(request , 'index.html' , {'room':rooms , 'username':username})
+def register(request) :
+    tokens = request.COOKIES.get('access_token')
+    if tokens :
+        return redirect('main')
+    if request.method == 'POST' :
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        hashed_password = PasswordGenerator.salt_hash_generator(password)
+        hashed_password_str = hashed_password.decode('utf-8')
+        try :
+            sweetuser = Sweetusers(username=username , email=email , set_password=hashed_password_str)
+            sweetuser.save()
+            token = Myrefreshtoken.for_user(sweetuser)
+            access_token  = str(token.access_token)
+            refresh_token = str(token)
+            response = redirect('main')
+            response.set_cookie(
+                'access_token', value=access_token,max_age=84600, httponly=True, secure=False, samesite='Strict'
+            )
+            response.set_cookie(
+                'refresh_token', value=refresh_token,max_age=84600, httponly=True, secure=False, samesite='Strict'
+            )
+            return response
+        except :
+            print("username constraint failed brooooo")
+    return render(request , 'register.html')
+
+
 def rooms(request , pk) :
     ct = chatroom.objects.get(id=pk)
     return render(request , 'password.html',{'cts':ct})
-@login_required(login_url='li')
+
 def createroom(request):
+    try :
+        tokens = request.COOKIES.get('access_token')
+        response = PasswordGenerator.decode_token(tokens)
+        user_id = response['id']
+    except :
+        return redirect('li')
+    user = Sweetusers.objects.get(id=user_id)
     if request.method=='POST' :
         room_name = request.POST.get('room_name')
         bio = request.POST.get('bio')
         room_id  = PasswordGenerator.generate()
         room_type = request.POST.get('room_types')
-        Room = chatroom(host=request.user,name=room_name,bio=bio,room_id=room_id,room_type=room_type)
+        Room = chatroom(host=user,name=room_name,bio=bio,room_id=room_id,room_type=room_type)
         Room.save()
         return redirect('main')
     return render(request , 'from.html')
-def updatedr(request , pk) :
-    upfor = chatroom.objects.get(id=pk)
-    ufor = roomfrom(instance=upfor)
-    if request.method == 'POST':
-        fo = roomfrom(request.POST , instance=upfor)
-        if fo.is_valid() :
-            fo.save()
-            return redirect('main')
-    return render(request , 'from.html' ,{'from' : ufor})
 def Profile_page(request) :
-    user_id = request.COOKIES.get('id')
+    try :
+        tokens = request.COOKIES.get('access_token')
+        response = PasswordGenerator.decode_token(tokens)
+        user_id = response['id']
+    except :
+        return redirect('li')
     if(user_id) :
-        user_profile = User.objects.get(id=user_id)
-        print(user_profile)
+        user_profile = Sweetusers.objects.get(id=user_id)
         try :
             rooms_created = chatroom.objects.filter(host=user_profile)
         except :
@@ -55,42 +94,49 @@ def Profile_page(request) :
         return render(request , 'profile.html' , {'user':user_profile,'rooms':rooms_created})
     else :
         return redirect('li')
-def signin(request) :
-    sihn = UserCreationForm()
+
+def login_users(request) :
     if request.method == 'POST' :
-        username = request.POST.get('username')
-        email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
-        if re.match(email_regex,username) :
-            mainuser = UserCreationForm(request.POST)
-            if mainuser.is_valid() :
-                mainuser.save()
-                return redirect('li')
-            else :
-                return redirect('si')
-    return render(request , 'signin.html', {'sin':sihn})
-def logini(request) :
-    if request.user.is_authenticated :
-        return redirect('main')
-    if request.method == 'POST' :
-        username = request.POST.get('us')
+        name = request.POST.get('us')
         password = request.POST.get('pa')
-        user = authenticate(username=username , password=password)
+        print('password:',password)
+        print(name)
+        try :
+            user = Sweetusers.objects.get(username=name)
+            print(user.set_password)
+        except :
+            user = None
+            print('user doesnt exist')
         if user is not None :
-            login(request , user)
-            response = redirect('main')
-            response.set_cookie('id', user.id, max_age=84600, secure=True, httponly=True)
-            return response
-        else :
-            return redirect('li')
+            if PasswordGenerator.check_password(password.encode('utf-8') , user.set_password) :
+                print("its alright your in........")
+                token = Myrefreshtoken.for_user(user)
+                access_token  = str(token.access_token)
+                refresh_token = str(token)
+                response = redirect('main')
+                response.set_cookie(
+                    'access_token', value=access_token,max_age=84600, httponly=True, secure=False, samesite='Strict'
+                )
+                response.set_cookie(
+                    'refresh_token', value=refresh_token,max_age=84600, httponly=True, secure=False, samesite='Strict'
+                )
+                return response
+            else :
+                print("vosri leloo")
+
+
+    
     return render(request , 'logge.html')
 def getout(request) :
-    logout(request)
     response =  redirect('/')
     response.delete_cookie('id')
+    response.delete_cookie('access_token')
+    response.delete_cookie('refresh_token')
     response.delete_cookie('chat_id')
+    request.session.flush()
     return response
 
-@login_required(login_url='li')
+
 def private_room(request) :
     if request.method == "POST" :
         room_id = request.POST.get('room_key')    
@@ -104,19 +150,20 @@ def private_room(request) :
             response.set_cookie('chat_id', chat_id)
             return response
         else :
+            return redirect('main')
             print("room not found")
     return render(request , 'private_room_password.html')
 
-@login_required(login_url='li')
+
 def chatting(request,pk) :
-    User_id =  request.COOKIES.get('id')
     try :
-        chat_id = request.COOKIES.get('chat_id')
+        tokens = request.COOKIES.get('access_token')
+        response = PasswordGenerator.decode_token(tokens)
+        user_id = response['id']
     except :
-        chat_id = None
-        return redirect('main')
-    if(User_id or chat_id is not None) :
-        user = User.objects.get(id=User_id)
+        return redirect('li')
+    if(user_id) :
+        user = Sweetusers.objects.get(id=user_id)
         try :
             chat_room = chatroom.objects.get(id=pk)
             return render(request , 'chat.html' ,{'room': chat_room , 'user':user})
