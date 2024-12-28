@@ -9,12 +9,15 @@ class JWTmiddleware(BaseMiddleware) :
         cookies = dict(item.split('=') for item in decode_cookie.split('; '))
         access_token = cookies.get('access_token')
         if access_token :
-            token_data = PasswordGenerator.decode_token(access_token)
+            token_data = self.decoder(access_token)
             scope['user'] ={
                 'id' : token_data['id'],
                 'username' : token_data['username']
             }
         return await super().__call__(scope , recieve , send)
+    def decoder(self , token) :
+        decoded_token = jwt.decode(token, options={"verify_signature": False})
+        return decoded_token 
 
 class Tokenvalidation :
     def __init__(self , get_response) :
