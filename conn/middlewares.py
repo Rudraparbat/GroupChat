@@ -4,8 +4,8 @@ from datetime import datetime ,time
 import jwt
 class JWTmiddleware(BaseMiddleware) :
     async def  __call__(self , scope , recieve , send) :
-        cookies = scope['headers'][10]
-        decode_cookie = cookies[1].decode('utf-8')
+        cookies = scope['headers']
+        decode_cookie = cookies.decode('utf-8')
         print(decode_cookie)
         try :
             cookies = dict(item.split('=') for item in decode_cookie.split('; '))
