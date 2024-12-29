@@ -1,17 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sign up</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGroup - Sign Up</title>
+  <style>
+    :root {
+      --yellow: #FBBF24;
+      --black: #000000;
+      --gray: #9CA3AF;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--black);
+      color: white;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: clamp(1.25rem, 4vw, 1.5rem);
+      font-weight: bold;
+      text-decoration: none;
+      color: white;
+    }
+
+    .logo i {
+      color: var(--yellow);
+      width: clamp(1.5rem, 5vw, 2rem);
+      height: clamp(1.5rem, 5vw, 2rem);
+    }
+
+    .signup-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      margin-top: 4rem;
+    }
+
+    .signup-form {
+      background: rgba(251, 191, 36, 0.05);
+      padding: clamp(1.5rem, 5vw, 3rem);
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 480px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .signup-form h1 {
+      font-size: clamp(1.5rem, 6vw, 2rem);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      color: var(--gray);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid transparent;
+      border-radius: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--yellow);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .password-note {
+      font-size: clamp(0.75rem, 2.5vw, 0.875rem);
+      color: var(--gray);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 9999px;
+      background: var(--yellow);
+      color: var(--black);
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .btn:hover {
+      background: #F59E0B;
+      transform: translateY(-2px);
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      color: var(--gray);
+    }
+
+    .login-link a {
+      color: var(--yellow);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .signup-form {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <form action="" method="post">
+  <nav>
+    <a href="index.html" class="logo">
+      <i data-lucide="message-square"></i>
+      <span>ChatGroup</span>
+    </a>
+  </nav>
+
+  <div class="signup-container">
+    <form class="signup-form" method="POST">
         {% csrf_token %}
-        <input type="text" name="username" placeholder="username"><br>
-        <input type="email" name="email" placeholder="email"><br>
-        <input type="password" name="password" placeholder="password"><br>
-        <input type="submit" value="submit">
+      <h1>Create your account</h1>
+      
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          name="username" 
+          required 
+          autocomplete="username"
+          placeholder="Choose a unique username"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          required 
+          autocomplete="email"
+          placeholder="Enter your email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          required 
+          autocomplete="new-password"
+          placeholder="Create a password"
+        >
+        <p class="password-note">No need to provide any strong password - provide anything which you can remember and leave the security to us.</p>
+      </div>
+
+      <button type="submit" class="btn">Sign Up</button>
+
+      <div class="login-link">
+        Already have an account? <a href="{% url 'li' %}">Log in</a>
+      </div>
     </form>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>

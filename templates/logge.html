@@ -1,74 +1,354 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #1f1c2c, #928dab);
-            color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .login-container {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
-            width: 100%;
-        }
-        .login-container h2 {
-            margin-bottom: 20px;
-            color: #ffc107;
-        }
-        .form-control {
-            background: transparent;
-            color: #f4f4f4;
-            border: 1px solid #f4f4f4;
-        }
-        .form-control::placeholder {
-            color: #bbb;
-        }
-        .btn-primary {
-            background: #ffc107;
-            border: none;
-            width: 100%;
-            padding: 10px;
-        }
-        .btn-primary:hover {
-            background: #e0a800;
-        }
-        .form-text {
-            color: #bbb;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGroup - Login</title>
+  <style>
+    :root {
+      --yellow: #FBBF24;
+      --black: #000000;
+      --gray: #9CA3AF;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--black);
+      color: white;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .login-form-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(1.5rem, 5vw, 4rem);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-form-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at top right, rgba(251, 191, 36, 0.1), transparent 50%);
+      pointer-events: none;
+    }
+
+    .login-image-section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-image-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(0, 0, 0, 0.7) 50%,
+        rgba(251, 191, 36, 0.2) 100%
+      );
+      z-index: 1;
+    }
+
+    .login-image-section::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+      background-size: cover;
+      background-position: center;
+      animation: slowZoom 20s infinite alternate;
+      z-index: 0;
+    }
+
+    @keyframes slowZoom {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: clamp(1.25rem, 4vw, 1.5rem);
+      font-weight: bold;
+      text-decoration: none;
+      color: white;
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      z-index: 2;
+    }
+
+    .logo i {
+      color: var(--yellow);
+      width: clamp(1.5rem, 5vw, 2rem);
+      height: clamp(1.5rem, 5vw, 2rem);
+    }
+
+    .login-form {
+      max-width: 420px;
+      width: 100%;
+      margin: 0 auto;
+      animation: fadeIn 0.6s ease-out;
+      position: relative;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-form h1 {
+      font-size: clamp(1.75rem, 6vw, 2.25rem);
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, #fff, #FBBF24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .login-form p {
+      color: var(--gray);
+      margin-bottom: 2rem;
+      font-size: clamp(0.875rem, 3vw, 1rem);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      color: var(--gray);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--yellow);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);
+    }
+
+    .forgot-password {
+      text-align: right;
+      margin-bottom: 1.5rem;
+    }
+
+    .forgot-password a {
+      color: var(--yellow);
+      text-decoration: none;
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      transition: all 0.3s ease;
+    }
+
+    .forgot-password a:hover {
+      color: #F59E0B;
+      text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, var(--yellow), #F59E0B);
+      color: var(--black);
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      transition: 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(251, 191, 36, 0.3);
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      color: var(--gray);
+    }
+
+    .signup-link a {
+      color: var(--yellow);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .signup-link a:hover {
+      color: #F59E0B;
+      text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+    }
+
+    .quote {
+      max-width: 500px;
+      text-align: center;
+      font-size: clamp(1.25rem, 4vw, 1.75rem);
+      font-weight: 300;
+      line-height: 1.6;
+      position: relative;
+      z-index: 2;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .quote-author {
+      margin-top: 1rem;
+      color: var(--yellow);
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        grid-template-columns: 1fr;
+      }
+
+      .login-image-section {
+        display: none;
+      }
+
+      .logo {
+        position: static;
+        margin-bottom: 2rem;
+      }
+
+      .login-form-section {
+        padding: 2rem;
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent);
+      }
+
+      .login-form {
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+      }
+    }
+  </style>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form method='POST'>
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="username"  class="form-label">Username</label>
-                <input type="text" class="form-control" name="us" id="username" placeholder="Enter your username" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password"  name="pa" class="form-control" id="password" placeholder="Enter your password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button><br><br>
-        </form>
-        <a href=""><button type="submit" class="btn btn-primary">Login wiht google</button></a>
-        <div class="form-text mt-3">Don't have an account? <a href="{% url 'si' %}" style="color: #614b0e;">Sign up</a></div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <main class="login-container">
+    <section class="login-form-section">
+      <a href="index.html" class="logo">
+        <i data-lucide="message-square"></i>
+        <span>ChatGroup</span>
+      </a>
+      
+      <form class="login-form" method="POST">
+        {% csrf_token %}
+        <h1>Welcome back</h1>
+        <p>Please enter your details to sign in</p>
+        
+        <div class="form-group">
+          <label for="text">Username</label>
+          <input 
+            type="text" 
+            id="email" 
+            name="us" 
+            required 
+            placeholder="Enter your Username"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="pa" 
+            required 
+            placeholder="Enter your password"
+          >
+        </div>
+
+        <div class="forgot-password">
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn">Sign In</button>
+
+        <div class="signup-link">
+          Don't have an account? <a href="signup.html">Sign up</a>
+        </div>
+      </form>
+    </section>
+
+    <section class="login-image-section">
+      <!-- <blockquote class="quote">
+        "Communication is the key to success. ChatGroup makes it seamless and secure."
+        <footer class="quote-author">— ChatGroup Team</footer>
+      </blockquote> -->
+    </section>
+  </main>
+
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>

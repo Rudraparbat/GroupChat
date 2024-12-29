@@ -1,49 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<style>
-    .container {
-        position: relative;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 20px; /* Space between buttons */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGroup - Connect and Collaborate</title>
+  <style>
+    :root {
+      --yellow: #FBBF24;
+      --black: #000000;
+      --gray: #9CA3AF;
     }
-    .centered-button {
-        padding: 10px 20px;
-        background-color: #000000;
-        color: #8d2896; /* White text for visibility */
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease; /* Add transition effect */
-        text-decoration: none; /* Remove underline from link */
-    }
-    .centered-button:hover {
-        background-color: #191c1f; /* Change color on hover */ /* Black text on hover */
-    }
-    .side {
-        margin: 20px;
-        font-size: 16px;
-    }
-    .hidden {
-        display: none;
-    }
-</style>
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--black);
+      color: white;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      background: var(--black);
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: clamp(1.25rem, 4vw, 1.5rem);
+      font-weight: bold;
+    }
+
+    .logo i {
+      color: var(--yellow);
+      width: clamp(1.5rem, 5vw, 2rem);
+      height: clamp(1.5rem, 5vw, 2rem);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1.5rem;
+      border-radius: 9999px;
+      border: none;
+      font-size: clamp(0.875rem, 3vw, 1rem);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--yellow);
+      color: var(--yellow);
+    }
+
+    .btn-outline:hover {
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    .btn-primary {
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    .btn-primary:hover {
+      background: #F59E0B;
+    }
+
+    .btn-large {
+      padding: 0.75rem 2rem;
+      font-size: clamp(1rem, 3vw, 1.125rem);
+      font-weight: 600;
+    }
+
+    .hero-content {
+      width: 100%;
+      max-width: 768px;
+      margin: 5rem auto 0;
+      padding: 0 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content h1 {
+      font-size: clamp(2rem, 8vw, 3.75rem);
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .hero-content p {
+      font-size: clamp(1rem, 4vw, 1.25rem);
+      color: var(--gray);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+
+    .features {
+      padding: 4rem 1rem;
+      background: var(--black);
+    }
+
+    .features h2 {
+      text-align: center;
+      font-size: clamp(1.75rem, 6vw, 2.25rem);
+      margin-bottom: 3rem;
+    }
+
+    .features h2 span {
+      color: var(--yellow);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      border-radius: 1rem;
+      background: rgba(251, 191, 36, 0.05);
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+
+    .feature-card:hover {
+      background: rgba(251, 191, 36, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .feature-card i {
+      color: var(--yellow);
+      width: clamp(2.5rem, 8vw, 3rem);
+      height: clamp(2.5rem, 8vw, 3rem);
+    }
+
+    .feature-card h3 {
+      font-size: clamp(1.25rem, 4vw, 1.5rem);
+      margin: 1rem 0 0.5rem;
+    }
+
+    .feature-card p {
+      color: var(--gray);
+      font-size: clamp(0.875rem, 3vw, 1rem);
+    }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(2rem);
+      transition: all 0.6s ease-out;
+    }
+
+    .animate-on-scroll.animate-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .typewriter {
+      overflow: hidden;
+      border-right: 3px solid var(--yellow);
+      white-space: pre-wrap;
+      margin: 0 auto;
+      animation: 
+        typing 3.5s steps(40, end),
+        blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: var(--yellow) }
+    }
+
+    @media (max-width: 640px) {
+      .hero-content {
+        margin-top: 4rem;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
 <body>
-    <div class="side">
-        <h1 align="center">enough scrolling now go to the main page create room and talk</h1>
+  <div class="hero">
+    <nav>
+      <div class="logo">
+        <i data-lucide="message-square"></i>
+        <span>ChatGroup</span>
+      </div>
+      <div class="nav-buttons">
+        <button id="Login" class="btn btn-outline">Login</button>
+      </div>
+    </nav>
+
+    <div class="hero-content">
+      <h1 class="typewriter">Connect. Chat. Collaborate.</h1>
+      <p class="animate-on-scroll">Experience real-time group conversations like never before. Join millions of users who trust ChatGroup for seamless communication.</p>
+      <button id="sign-up-btn" class="btn btn-primary btn-large animate-on-scroll">Get Started</button>
     </div>
-    <div class="container">
-        <a href="{% url 'si' %}" class="centered-button">Sign Up</a>
-        <a href="{% url 'li' %}" class="centered-button">Login</a>
-      
+  </div>
+
+  <div class="features">
+    <h2>Why Choose <span>ChatGroup</span>?</h2>
+    <div class="feature-grid">
+      <div class="feature-card animate-on-scroll">
+        <i data-lucide="users"></i>
+        <h3>Group Dynamics</h3>
+        <p>Create unlimited groups and manage them effortlessly</p>
+      </div>
+      <div class="feature-card animate-on-scroll">
+        <i data-lucide="shield"></i>
+        <h3>Secure Chats</h3>
+        <p>End-to-end encryption for all your conversations</p>
+      </div>
+      <div class="feature-card animate-on-scroll">
+        <i data-lucide="zap"></i>
+        <h3>Lightning Fast</h3>
+        <p>Real-time messaging with minimal latency</p>
+      </div>
     </div>
+  </div>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(element => {
+      observer.observe(element);
+    });
+    const signup = document.getElementById("sign-up-btn")
+    signup.addEventListener("click",(e)=>{
+        window.location.href = "{% url 'si' %}"
+    })
+    const login = document.getElementById("Login")
+    login.addEventListener("click" , (e)=>{
+        window.location.href = "{% url 'li' %}"
+    })
+
+  </script>
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
