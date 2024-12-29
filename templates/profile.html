@@ -4,165 +4,245 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --yellow: #FBBF24;
+            --black: #000000;
+            --gray: #9CA3AF;
+            --dark-gray: #1E1E1E;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background: var(--black);
+            color: white;
+            line-height: 1.5;
             min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(-45deg, #121212, #1e1e1e, #2c2c2c, #1a1a1a);
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-            color: #e0e0e0;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px;
+            overflow-x: hidden;
         }
 
-        .container {
+        .sidebar {
+            width: 250px;
+            background-color: var(--dark-gray);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--yellow);
+            margin-bottom: 1rem;
+        }
+
+        .username {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--yellow);
+            margin-bottom: 0.5rem;
+        }
+
+        .user-type {
+            font-size: 1rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .nav-links {
+            list-style-type: none;
             width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-            background-color: rgba(30, 30, 30, 0.9);
-            border: 1px solid #333;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links li {
+            margin-bottom: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--yellow);
+        }
+
+        .nav-links i {
+            margin-right: 0.5rem;
+            width: 20px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: 100vh;
         }
 
         h1, h2 {
-            color: #ffc107;
-            margin-bottom: 20px;
+            color: var(--yellow);
+            margin-bottom: 1.5rem;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
         }
 
         .room {
-            background-color: #333;
-            margin-bottom: 20px;
-            padding: 16px;
+            background-color: rgba(251, 191, 36, 0.05);
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
             border-radius: 12px;
-            transition: transform 0.2s ease;
-            animation: messageAppear 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .room:hover {
-            transform: scale(1.01);
+            background-color: rgba(251, 191, 36, 0.1);
+            transform: translateY(-4px);
         }
 
         p {
-            margin: 8px 0;
-            font-size: 0.95rem;
-            line-height: 1.5;
+            margin: 0.5rem 0;
+            font-size: clamp(0.875rem, 2vw, 0.95rem);
         }
 
         strong {
-            color: #ffc107;
-        }
-
-        @keyframes messageAppear {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                border-radius: 8px;
-                padding: 15px;
-            }
-
-            h1, h2 {
-                font-size: 1.5rem;
-            }
-
-            .room {
-                padding: 12px;
-            }
-
-            p {
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 5px;
-            }
-
-            .container {
-                border-radius: 4px;
-                padding: 10px;
-            }
-
-            h1, h2 {
-                font-size: 1.2rem;
-            }
-
-            .room {
-                padding: 10px;
-            }
-
-            p {
-                font-size: 0.85rem;
-            }
+            color: var(--yellow);
         }
 
         .button-group {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
-            margin-top: 15px;
+            margin-top: 1rem;
         }
 
-        .btn-delete, .btn-chat {
-            padding: 8px 16px;
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
             border: none;
-            border-radius: 6px;
-            font-weight: bold;
+            font-size: clamp(0.875rem, 2vw, 1rem);
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: bold;
             text-transform: uppercase;
-            font-size: 0.8rem;
         }
+
+        .btn-delete {
+            background: transparent;
+            border: 2px solid var(--yellow);
+            color: var(--yellow);
+        }
+
+        .btn-delete:hover {
+            background: var(--yellow);
+            color: var(--black);
+        }
+
+        .btn-chat {
+            background: var(--yellow);
+            color: var(--black);
+        }
+
+        .btn-chat:hover {
+            background: #F59E0B;
+        }
+
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        @media (max-width: 480px) {
-            .button-group {
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            background: var(--yellow);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: #F59E0B;
+        }
+
+        .menu-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--black);
+        }
+
+        @media (max-width: 768px) {
+            body {
                 flex-direction: column;
             }
-            
-            .btn {
-                width: 100%;
+
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                top: 0;
+                bottom: 0;
+                z-index: 1000;
+            }
+
+            .sidebar.active {
+                transform: translateX(250px);
+            }
+
+            .main-content {
+                padding-top: 5rem;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .room {
+                padding: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Your Profile</h1>
-        <p>Your name: {{user.username}}</p>
+    <button class="menu-toggle" aria-label="Toggle menu">
+        <svg viewBox="0 0 100 80" width="40" height="40">
+            <rect width="100" height="20"></rect>
+            <rect y="30" width="100" height="20"></rect>
+            <rect y="60" width="100" height="20"></rect>
+        </svg>
+    </button>
+
+    <aside class="sidebar">
+        <img src="image.svg"  class="profile-image">
+        <h1 class="username">{{user.username}}</h1>
+        <p class="user-type">Room Creator</p>
+        <ul class="nav-links">
+            <li><a href="#"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="#"><i class="fas fa-door-open"></i> My Rooms</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+            <li><a href="{% url 'go'  %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
         <h2>Your created rooms:</h2>
         {% if rooms != None %}
         {% for room in rooms %}
@@ -174,13 +254,31 @@
             <p><strong>Created:</strong> {{room.created | timesince}} ago</p>
             <p><strong>Updated:</strong> {{room.updated | timesince}}</p>
             <div class="button-group">
-                <button class="btn-delete">Delete</button>
-                <a href="{% url 'room' room.id %}"><button class="btn-chat">Chat</button></a>
+                <button class="btn btn-delete">Delete</button>
+                <a href="{% url 'room' room.id %}"><button class="btn btn-chat">Chat</button></a>
             </div>
         </div>
         {% endfor %}
         {% endif %}
-    </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+
+            mainContent.addEventListener('click', () => {
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
 
