@@ -29,9 +29,12 @@ def main(request) :
         b = rooms.count()
     return render(request , 'index.html' , {'room':rooms , 'username':username})
 def register(request) :
-    tokens = request.COOKIES.get('access_token')
-    if tokens :
-        return redirect('main')
+    try :
+        tokens = request.COOKIES.get('access_token')
+        if tokens :
+            return redirect('main')
+    except :
+        pass
     if request.method == 'POST' :
         username = request.POST.get('username')
         email = request.POST.get('email')

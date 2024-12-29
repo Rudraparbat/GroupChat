@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path , include
 from conn import views
 
+
 urlpatterns = [
     path('',views.home , name='home'),
     path('maine/', views.main,name='main'),
