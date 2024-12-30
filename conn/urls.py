@@ -13,5 +13,6 @@ urlpatterns = [
     path('profile/',views.Profile_page,name='profile'),
     path('signup/' , views.register , name='si'),
     path('login/' , views.login_users , name='li'),
+    path('delete/<str:pk>/' , views.delete_chatroom , name='delete_profile'),
     path('logout/' , views.getout , name='go'),
 ]

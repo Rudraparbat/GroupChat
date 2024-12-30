@@ -194,7 +194,12 @@
           autocomplete="username"
           placeholder="Choose a unique username"
         >
+        {% if message != None %}
+        <p class="password-note">{{message}}</p>
+        {% else %}
         <p class="password-note">Username must be unique if that username already exist then youve to choose another name</p>
+        {% endif %}
+  
       </div>
 
       <div class="form-group">

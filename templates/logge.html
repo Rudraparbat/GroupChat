@@ -30,6 +30,12 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
     }
+    .error_message{
+      font-size: clamp(0.75rem, 2.5vw, 0.875rem);
+      color: var(--gray);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
 
     .login-form-section {
       display: flex;
@@ -304,7 +310,9 @@
         {% csrf_token %}
         <h1>Welcome back</h1>
         <p>Please enter your details to sign in</p>
-        
+        {%  if login_msg != None  %}
+          <P class="error_message">{{login_msg}}</P>
+        {% endif %}
         <div class="form-group">
           <label for="text">Username</label>
           <input 

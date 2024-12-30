@@ -254,7 +254,7 @@
             <p><strong>Created:</strong> {{room.created | timesince}} ago</p>
             <p><strong>Updated:</strong> {{room.updated | timesince}}</p>
             <div class="button-group">
-                <button class="btn btn-delete">Delete</button>
+                <button id="dlt" class="btn btn-delete"><a href="{% url 'delete_profile' room.id %}">Delete</a></button>
                 <a href="{% url 'room' room.id %}"><button class="btn btn-chat">Chat</button></a>
             </div>
         </div>

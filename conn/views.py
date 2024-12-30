@@ -29,6 +29,7 @@ def main(request) :
         b = rooms.count()
     return render(request , 'index.html' , {'room':rooms , 'username':username})
 def register(request) :
+    message = None
     try :
         tokens = request.COOKIES.get('access_token')
         if tokens :
@@ -56,8 +57,8 @@ def register(request) :
             )
             return response
         except :
-            print("username constraint failed brooooo")
-    return render(request , 'register.html')
+            message = "Username already taken pls choose another one"
+    return render(request , 'register.html' , {'message':message})
 
 
 def rooms(request , pk) :
@@ -99,6 +100,7 @@ def Profile_page(request) :
         return redirect('li')
 
 def login_users(request) :
+    login_msg = None
     if request.method == 'POST' :
         name = request.POST.get('us')
         password = request.POST.get('pa')
@@ -109,7 +111,7 @@ def login_users(request) :
             print(user.set_password)
         except :
             user = None
-            print('user doesnt exist')
+            login_msg = "Username doesnt exist"
         if user is not None :
             if PasswordGenerator.check_password(password.encode('utf-8') , user.set_password) :
                 print("its alright your in........")
@@ -125,11 +127,8 @@ def login_users(request) :
                 )
                 return response
             else :
-                print("vosri leloo")
-
-
-    
-    return render(request , 'logge.html')
+                login_msg = "Password not matched try again.."
+    return render(request , 'logge.html' , {"login_msg" : login_msg})
 def getout(request) :
     response =  redirect('/')
     response.delete_cookie('id')
@@ -174,3 +173,9 @@ def chatting(request,pk) :
             return redirect('rooms',pk=pk)
     else :
         return redirect('li')
+
+
+def delete_chatroom(request,pk) :
+    room = chatroom.objects.get(id=pk)
+    room.delete()
+    return redirect('main')
