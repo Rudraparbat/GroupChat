@@ -8,7 +8,10 @@ import jwt
     
 class JWTmiddleware(BaseMiddleware) :
     async def  __call__(self , scope , recieve , send) :
-        cookies = scope['headers'][13]
+        try :
+            cookies = scope['headers'][13]
+        except :
+            cookies = scope['headers'][10]
         scopes = scope['headers']
         decode_cookie = cookies[1].decode('utf-8')
         try :
