@@ -85,7 +85,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',

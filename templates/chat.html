@@ -321,6 +321,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        #participant-mode {
+            font-size: 0.9rem;
+            color: #149262;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-left: 10px;
+        }
 
         .toggle-participants {
             display: none;
@@ -452,7 +460,6 @@
             
             // If participant already exists, don't add them again
             if (existingParticipant) {
-                console.log(`Participant ${username} already exists`);
                 return;
             }
             // Create new participant element
@@ -460,7 +467,8 @@
             participantElement.className = 'participant';
             participantElement.innerHTML = `
                 <div class="participant-status"></div>
-                <div class="participant-name">${username}</div>
+                <div class="participant-name">${username}</div> <div id="participant-mode">online</div>
+                
             `;
             participantsList.appendChild(participantElement);
     }
@@ -473,28 +481,11 @@
             for (const participant of participants) {
                 const nameElement = participant.querySelector('.participant-name');
                 if (nameElement.innerHTML === username) {
-                    console.log('Removed:', username);
                     participant.remove();
                     break;
                 }
             }
         }
-
-        // function broadcastUserLeave(username) {
-        //     const chatBox = document.getElementById('chat-box');
-        //     const leaveMessage = document.createElement('div');
-        //     leaveMessage.className = 'message';
-        //     leaveMessage.style.backgroundColor = '#2a2a2a';
-        //     leaveMessage.style.textAlign = 'center';
-        //     leaveMessage.style.maxWidth = '100%';
-        //     leaveMessage.innerHTML = `
-        //         <div class="text" style="color: #ff5252">
-        //             ${username} has left the room
-        //         </div>
-        //     `;
-        //     chatBox.appendChild(leaveMessage);
-        //     chatBox.scrollTop = chatBox.scrollHeight;
-        // }
 
         // Prevent elastic scrolling on iOS
         document.body.addEventListener('touchmove', function(e) {
@@ -540,12 +531,27 @@
                 console.error('WebSocket error:', error);
             });
         }
+        var timer = null
+        function status_shower(username , status){
+            const participantsList = document.getElementById('participants-list');
+            const existingParticipant = Array.from(participantsList.getElementsByClassName('participant'))
+                .find(participant => participant.querySelector('.participant-name').textContent === username);
+            const mode = existingParticipant.querySelector("#participant-mode")
+            mode.innerHTML = status
+            if (timer){
+                        clearTimeout(timer)
+                    }
+                    timer = setTimeout(() => {
+                        mode.innerHTML = "online"
+                    }, 1000);
+        
+
+        }
 
         // Message handling
         function handleMessage(event) {
             try {
                 const data = JSON.parse(event.data);
-                
                 switch(data.type) {
                     case 'new_message':
                         addMessage(data.username, data.message);
@@ -561,12 +567,13 @@
                         });
                         break;
                     case 'new_participant' :
-                        console.log('Added:', data.participant);
                         addParticipant(data.participant);
                         break
                     case 'left_participant' :
-                        console.log('Removed:', data.participant);
                         removeParticipant(data.participant);
+                        break
+                    case "status_handeling" :
+                        status_shower(data.username , data.status)
                         break
 
                 }
@@ -627,7 +634,18 @@
                 messageInput.blur(); // Hide keyboard on mobile after sending
             }
         });
+        // Add user mode if its online or typing or offine
+        
+                const msg_input = document.getElementById("message-input")
+                msg_input.addEventListener('input' , (e)=>{
+            
+                    socket.send(JSON.stringify({
+                        "status" : "typing...",
+                        "username" : username
+                    }))
+                    
 
+                })
         // Prevent zoom on double tap (iOS)
         let lastTouchEnd = 0;
         document.addEventListener('touchend', (event) => {

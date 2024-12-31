@@ -104,17 +104,13 @@ def login_users(request) :
     if request.method == 'POST' :
         name = request.POST.get('us')
         password = request.POST.get('pa')
-        print('password:',password)
-        print(name)
         try :
             user = Sweetusers.objects.get(username=name)
-            print(user.set_password)
         except :
             user = None
             login_msg = "Username doesnt exist"
         if user is not None :
             if PasswordGenerator.check_password(password.encode('utf-8') , user.set_password) :
-                print("its alright your in........")
                 token = Myrefreshtoken.for_user(user)
                 access_token  = str(token.access_token)
                 refresh_token = str(token)
@@ -140,6 +136,7 @@ def getout(request) :
 
 
 def private_room(request) :
+    error_msg = None
     if request.method == "POST" :
         room_id = request.POST.get('room_key')    
         try :
@@ -152,9 +149,8 @@ def private_room(request) :
             response.set_cookie('chat_id', chat_id)
             return response
         else :
-            return redirect('main')
-            print("room not found")
-    return render(request , 'private_room_password.html')
+            error_msg = "The room of that id doesnt exist."
+    return render(request , 'private_room_password.html', {'error_msg': error_msg})
 
 
 def chatting(request,pk) :

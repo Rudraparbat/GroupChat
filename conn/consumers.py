@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 #  Redis setup
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 parsed_url = urlparse(REDIS_URL)
 redis_client = redis.StrictRedis(
     host=parsed_url.hostname,
@@ -50,11 +50,10 @@ class Chatapp(AsyncWebsocketConsumer) :
                     "type" : "old_message",
                     'messages': list(map(lambda msg: json.loads(msg.decode()), latest_messages))
                 }))
-                print(list(map(lambda msg: json.loads(msg.decode()), latest_messages)))
+
         # show joined users
         participant =  redis_client.smembers(self.participant_key)
         participants = [username.decode('utf-8') for username in participant]
-        print(participants)
         await self.send(text_data=json.dumps({
             "type": "old_participants",
             "participants": participants
@@ -64,26 +63,42 @@ class Chatapp(AsyncWebsocketConsumer) :
     async def receive(self, text_data=None, bytes_data=None):
         if text_data :
             data_got = json.loads(text_data)
-            await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type' : 'chat_message',
+            try :
+                await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {
+                            'type' : 'chat_message',
+                            "username" : data_got['username'],
+                            "message" : data_got['message']
+                        }
+                    )
+                if data_got['type'] == "new_message" :
+                    redis_client.rpush(self.redis_key,json.dumps({
                         "username" : data_got['username'],
                         "message" : data_got['message']
+                    }))
+                redis_client.expire(self.redis_key,86400) 
+            except :
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        "type" : "event_hendlaer",
+                        "status" : data_got["status"],
+                        "username" : data_got["username"]
                     }
+
                 )
-            print("message :",data_got['message'])
-            if data_got['type'] == "new_message" :
-                redis_client.rpush(self.redis_key,json.dumps({
-                    "username" : data_got['username'],
-                    "message" : data_got['message']
-                }))
-            redis_client.expire(self.redis_key,86400) 
         else :
-            print("its byte code")
+            pass
 
 
-
+    async def event_hendlaer(self, event) :
+        data = event['status']
+        await self.send(text_data=json.dumps({
+            "type" : "status_handeling" ,
+            "status" : data,
+            "username" : event["username"]
+        }))
     async def chat_message(self, event) :
         data = event['message']
         await self.send(text_data=json.dumps({
@@ -113,7 +128,7 @@ class Chatapp(AsyncWebsocketConsumer) :
             self.channel_name
         )
         redis_client.close()
-        print("connection ended")
+
     async def left_participant(self, event) :
         await self.send(text_data=json.dumps({
             "type" : "left_participant",
