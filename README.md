@@ -15,5 +15,7 @@ A scalable real-time group chat application built with Django Channels, Redis, a
   ## Note : Make sure your Docker engine is already running.
   
   Server will be available at http://127.0.0.1:8000 in your browser
-
   or Go the browser paste the url after starting the server and enjoy the 'ChatForge'. Thank You
+  ## Live link -  https://chatforge.onrender.com/ 
+
+  ## Note : Live server takes time to wake cause of free tier hosting.
