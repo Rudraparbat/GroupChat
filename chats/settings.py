@@ -115,12 +115,11 @@ REST_FRAMEWORK = {
 
 }
 
-# PG_DB_URL = "postgresql://chatforge:aexazqkIJcf4SGau1V46s3I6eCnjffdA@dpg-ctr676lsvqrc73d2p06g-a.oregon-postgres.render.com/chatforge"
 
-PG_DB_URL = "postgresql://postgres:postgres@postgres_db:5432/postgres"
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=PG_DB_URL
+        default=os.getenv('PG_DB_URL'," postgresql://postgres:postgres@postgres_db:5432/postgres")
     )
 }
 
