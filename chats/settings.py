@@ -81,7 +81,7 @@ ASGI_APPLICATION = 'chats.asgi.application'
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',  
-    'https://groupchat-30bf.onrender.com',
+    'https://chatforge.onrender.com',
 ]
 
 
