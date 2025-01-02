@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 from datetime import timedelta
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -114,14 +115,14 @@ REST_FRAMEWORK = {
 
 }
 
+# PG_DB_URL = "postgresql://chatforge:aexazqkIJcf4SGau1V46s3I6eCnjffdA@dpg-ctr676lsvqrc73d2p06g-a.oregon-postgres.render.com/chatforge"
 
+PG_DB_URL = "postgresql://postgres:postgres@postgres_db:5432/postgres"
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=PG_DB_URL
+    )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

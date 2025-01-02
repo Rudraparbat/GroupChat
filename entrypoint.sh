@@ -1,7 +1,11 @@
 #!/bin/sh
 
-echo "Flushing Redis data..."
-redis-cli FLUSHALL
+set -e  
+
+if [ "$DJANGO_ENV" = "local" ]; then
+  echo "Waiting for PostgreSQL..."
+  /app/wait-for-it.sh db:5432 --timeout=30 --strict -- echo "Database is up!"
+fi
 
 echo "Running makemigrations..."
 python manage.py makemigrations

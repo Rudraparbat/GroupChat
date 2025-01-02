@@ -1,5 +1,6 @@
 FROM python:3.13-slim-bookworm
 
+RUN apt-get update 
 # Set the working directory
 WORKDIR /app
 
