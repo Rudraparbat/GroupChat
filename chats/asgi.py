@@ -23,10 +23,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chats.settings')
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AllowedHostsOriginValidator(
-        JWTmiddleware(
-            URLRouter([
+        
+            JWTmiddleware(URLRouter([
                 re_path(r'^(?P<room_name>[a-zA-Z]+)/(?P<room_id>\d+)/$',Chatapp.as_asgi())
             ])
-        )
+            )
+        
     ),
 })

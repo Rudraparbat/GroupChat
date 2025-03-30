@@ -6,7 +6,7 @@ services:
   app:
     build: .
     volumes :
-      - .:/chatapp
+      - .:/app
     ports:
       [8000:8000]
     image: app:chatapp

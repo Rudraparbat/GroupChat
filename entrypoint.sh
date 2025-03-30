@@ -16,7 +16,7 @@ python manage.py migrate
 
 echo "Starting Django server..."
 
-daphne -b 0.0.0.0 -p 8000 chats.asgi:application
+python manage.py runserver 0.0.0.0:8000
 
 
 exec "$@"
